@@ -1,6 +1,8 @@
 const {
     getCompleteLaunches,
     addNewLaunch,
+    checkValidFlightNumber,
+    deleteSingleLaunch,
 } = require('../../models/launches.model');
 
 function getAllLaunches(req, res) {
@@ -35,4 +37,18 @@ const postNewLaunch = (req, res) => {
     }
 };
 
-module.exports = { getAllLaunches, postNewLaunch };
+const abortMission = (req, res) => {
+    const launchID = Number(req.params.id);
+    console.log(launchID);
+    if (!launchID) {
+        return res.status(400).json({ error: 'Missing Flight ID' });
+    }
+
+    if (!checkValidFlightNumber(launchID)) {
+        return res.status(404).json({ error: 'Flight Number not Found' });
+    } else if (deleteSingleLaunch(launchID)) {
+        return res.status(200).json({ success: 'Successfully Aborted' });
+    }
+};
+
+module.exports = { getAllLaunches, postNewLaunch, abortMission };

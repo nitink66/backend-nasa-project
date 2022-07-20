@@ -30,7 +30,24 @@ function addNewLaunch(newLaunch) {
     );
 }
 
+function checkValidFlightNumber(launchFlightID) {
+    return launches.has(launchFlightID);
+}
+
+function deleteSingleLaunch(launchFlightID) {
+    const abortedFlight = launches.get(launchFlightID);
+    abortedFlight.upcoming = false;
+    abortedFlight.success = false;
+    return abortedFlight;
+}
+
 launches.set(launch.flightNumber, launch);
 // launches.get(100) ==> wil return by key value
 
-module.exports = { launches, getCompleteLaunches, addNewLaunch };
+module.exports = {
+    launches,
+    getCompleteLaunches,
+    addNewLaunch,
+    checkValidFlightNumber,
+    deleteSingleLaunch,
+};

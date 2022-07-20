@@ -26,17 +26,32 @@ async function httpGetLaunches() {
 async function httpSubmitLaunch(launch) {
     // TODO: Once API is ready.
     // Submit given launch data to launch system.
-    axios
+    const response = await axios
         .post(`${API_URL}/addNewLaunch`, launch)
         .then((res) => {
             return true;
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            console.log(err);
+            return false;
+        });
+    return response;
 }
 
 async function httpAbortLaunch(id) {
     // TODO: Once API is ready.
     // Delete launch with given ID.
+    const response = await axios
+        .delete(`${API_URL}/deleteLaunch/${id}`)
+        .then(() => {
+            return true;
+        })
+        .catch((err) => {
+            console.log(err);
+            return false;
+        });
+
+    return response;
 }
 
 export { httpGetPlanets, httpGetLaunches, httpSubmitLaunch, httpAbortLaunch };
