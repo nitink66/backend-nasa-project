@@ -4,7 +4,6 @@ const API_URL = 'http://localhost:2020';
 
 async function httpGetPlanets() {
     let results = await axios.get(`${API_URL}/planets`).then((res) => {
-        console.log(res.data);
         return res.data;
     });
 
@@ -15,7 +14,6 @@ async function httpGetLaunches() {
     // TODO: Once API is ready.
     // Load launches, sort by flight number, and return as JSON.
     let results = await axios.get(`${API_URL}/launches`).then((res) => {
-        console.log(res.data);
         return res.data;
     });
     const fetchedLaunches = await results;
@@ -28,6 +26,12 @@ async function httpGetLaunches() {
 async function httpSubmitLaunch(launch) {
     // TODO: Once API is ready.
     // Submit given launch data to launch system.
+    axios
+        .post(`${API_URL}/addNewLaunch`, launch)
+        .then((res) => {
+            return true;
+        })
+        .catch((err) => console.log(err));
 }
 
 async function httpAbortLaunch(id) {

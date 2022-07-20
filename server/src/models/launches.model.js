@@ -1,5 +1,7 @@
 const launches = new Map();
 
+let latestFlightNumber = 100;
+
 const launch = {
     flightNumber: 100,
     launchDate: new Date('December 27, 2030'),
@@ -11,7 +13,24 @@ const launch = {
     customer: ['ZTM', 'Kepler'],
 };
 
+function getCompleteLaunches() {
+    return Array.from(launches.values());
+}
+
+function addNewLaunch(newLaunch) {
+    latestFlightNumber++;
+    launches.set(
+        latestFlightNumber,
+        Object.assign(newLaunch, {
+            flightNumber: latestFlightNumber,
+            upcoming: true,
+            success: true,
+            customer: ['ZeroToMastery', 'Kepler new'],
+        })
+    );
+}
+
 launches.set(launch.flightNumber, launch);
 // launches.get(100) ==> wil return by key value
 
-module.exports = { launches };
+module.exports = { launches, getCompleteLaunches, addNewLaunch };

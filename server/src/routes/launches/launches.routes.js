@@ -2,10 +2,10 @@ const express = require('express');
 
 const launchesRouter = express.Router();
 
-const { getAllLaunches } = require('./launches.controllers');
+const { getAllLaunches, postNewLaunch } = require('./launches.controllers');
 
 launchesRouter.get('/launches', getAllLaunches);
 
-// launchesRouter.get('/planets', getAllLaunches);
+launchesRouter.post('/addNewLaunch', postNewLaunch);
 
 module.exports = launchesRouter;
