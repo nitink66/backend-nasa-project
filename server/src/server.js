@@ -5,7 +5,6 @@ const app = require('./app');
 const mongoose = require('mongoose');
 
 const { loadPlanetsData } = require('./models/planets.model');
-const { mySqlDbConnection } = require('../utils/sqlConnector');
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -19,28 +18,19 @@ const server = http.createServer(app);
 
 async function startServer() {
     //MONGO DB Connection
+    await mongoose
+        .connect(DATABASE_URL)
+        .then(async () => {
+            console.log('Server has been connected to the Database');
 
-    // await mongoose
-    //     .connect(DATABASE_URL)
-    //     .then(async () => {
-    //         console.log('Server has been connected to the Database');
-
-    //         await loadPlanetsData();
-    //         server.listen(PORT, () => {
-    //             console.log(`Server is started on PORT : ${PORT}`);
-    //         });
-    //     })
-    //     .catch((err) => {
-    //         console.log('Error connecting to the database', err);
-    //     });
-
-    //MYSQL CONNECTION
-
-    await mySqlDbConnection();
-    await loadPlanetsData();
-    server.listen(PORT, () => {
-        console.log(`Server is started on PORT : ${PORT}`);
-    });
+            await loadPlanetsData();
+            server.listen(PORT, () => {
+                console.log(`Server is started on PORT : ${PORT}`);
+            });
+        })
+        .catch((err) => {
+            console.log('Error connecting to the database', err);
+        });
 }
 
 startServer();

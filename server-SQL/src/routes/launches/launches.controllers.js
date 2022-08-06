@@ -5,8 +5,18 @@ const {
     deleteSingleLaunch,
 } = require('../../models/launches.model');
 
+const DataBase = require('../../../db/Database');
+
+const { testQuery } = require('../../../db/queries/index');
+
+const db = new DataBase();
+
 async function getAllLaunches(req, res) {
-    return res.status(200).json(getCompleteLaunches());
+    console.log('inside all launches', testQuery());
+    const dbResponse = await db.execute(testQuery());
+    // console.log(dbResponse, '------------------------dbResponse');
+    return res.status(201).json(dbResponse);
+    // return res.status(200).json(getCompleteLaunches());
 }
 
 const postNewLaunch = (req, res) => {

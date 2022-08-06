@@ -1,4 +1,4 @@
-const planets = require('../../models/planets.mongoschema');
+const planets = require('../../models/planets.model');
 
 function getAllPlanets(req, res) {
     console.log('planets.length', planets.length);
