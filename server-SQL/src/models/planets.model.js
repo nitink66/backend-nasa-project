@@ -1,8 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const { parse } = require('csv-parse');
+const {
+    insertIntoPlanetsDB,
+    getAllPlanetsDBQuery,
+} = require('../../db/queries/planets');
 
-const planets = [];
+const DataBase = require('../../db/Database');
+
+const db = new DataBase();
 
 function isHabitable(planet) {
     return (
@@ -26,8 +32,7 @@ function loadPlanetsData() {
             )
             .on('data', async (data) => {
                 if (isHabitable(data)) {
-                    console.log('save', data.kepler_name);
-                    savePlanet(data);
+                    await savePlanet(data);
                 }
             })
             .on('error', (error) => {
@@ -36,10 +41,11 @@ function loadPlanetsData() {
             })
 
             .on('end', async () => {
-                const planetsFound = (await getAllPlanetsFromMongo()).length;
+                const planetsFound = await db.execute(getAllPlanetsDBQuery());
+
                 console.log(
                     'Read successful',
-                    `${planetsFound} planets found `
+                    `${planetsFound.rowCount} planets found `
                 );
 
                 resolve();
@@ -47,26 +53,9 @@ function loadPlanetsData() {
     });
 }
 
-const getAllPlanetsFromMongo = async () => {
-    const result = await planets.find({});
-    console.log('result', result);
-    return result;
-};
-
 async function savePlanet(data) {
-    console.log(data.kepler_name);
     try {
-        await planets.updateOne(
-            {
-                keplerName: data.kepler_name,
-            },
-            {
-                keplerName: data.kepler_name,
-            },
-            {
-                upsert: true,
-            }
-        );
+        return db.execute(insertIntoPlanetsDB(data));
     } catch (err) {
         console.log(`Unable to Create/Save Planets - ${err}`);
     }
@@ -74,5 +63,4 @@ async function savePlanet(data) {
 
 module.exports = {
     loadPlanetsData,
-    planets,
 };

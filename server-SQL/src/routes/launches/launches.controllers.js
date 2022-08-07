@@ -1,25 +1,24 @@
 const {
-    getCompleteLaunches,
-    addNewLaunch,
-    checkValidFlightNumber,
-    deleteSingleLaunch,
-} = require('../../models/launches.model');
+    getAllLaunchesDBQuery,
+    addNewLaunchDBQuery,
+    abortLaunchDBQuery,
+    checkValidFlightNumberFromDB,
+} = require('../../../db/queries/launches');
 
 const DataBase = require('../../../db/Database');
 
-const { testQuery } = require('../../../db/queries/index');
-
 const db = new DataBase();
 
-async function getAllLaunches(req, res) {
-    console.log('inside all launches', testQuery());
-    const dbResponse = await db.execute(testQuery());
-    // console.log(dbResponse, '------------------------dbResponse');
-    return res.status(201).json(dbResponse);
-    // return res.status(200).json(getCompleteLaunches());
+function getRandomNumberBetween(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const postNewLaunch = (req, res) => {
+async function getAllLaunches(req, res) {
+    const dbResponse = await db.execute(getAllLaunchesDBQuery());
+    return res.status(201).json(dbResponse.rows);
+}
+
+const postNewLaunch = async (req, res) => {
     console.log(req.body, 'body');
     const newLaunch = req.body;
     console.log('isNaN(newLaunch.launchDate)', isNaN(newLaunch.launchDate));
@@ -40,23 +39,29 @@ const postNewLaunch = (req, res) => {
     //     });
     // }
     else {
-        newLaunch.launchDate = new Date(newLaunch.launchDate);
-        addNewLaunch(newLaunch);
+        // newLaunch.launchDate = newLaunch.launchDate;
+        newLaunch.flightNumber = getRandomNumberBetween(100, 500);
+        newLaunch.upcoming = true;
+        newLaunch.success = true;
+        newLaunch.customer = ['ZeroToMastery', 'Kepler new'];
+        await db.execute(addNewLaunchDBQuery(newLaunch));
         res.status(201).json(newLaunch);
     }
 };
 
-const abortMission = (req, res) => {
+const abortMission = async (req, res) => {
     const launchID = Number(req.params.id);
     console.log(launchID);
     if (!launchID) {
         return res.status(400).json({ error: 'Missing Flight ID' });
-    }
-
-    if (!checkValidFlightNumber(launchID)) {
-        return res.status(404).json({ error: 'Flight Number not Found' });
-    } else if (deleteSingleLaunch(launchID)) {
-        return res.status(200).json({ success: 'Successfully Aborted' });
+    } else if (launchID) {
+        const result = await db.execute(checkValidFlightNumberFromDB(launchID));
+        if (result.rowCount === 0) {
+            return res.status(400).json({ error: 'Flight Number not Found' });
+        } else {
+            await db.execute(abortLaunchDBQuery(launchID));
+            return res.status(200).json({ success: 'Successfully Aborted' });
+        }
     }
 };
 

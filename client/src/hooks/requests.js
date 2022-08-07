@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:2020';
+const API_URL = 'http://localhost:2021';
 
 async function httpGetPlanets() {
     let results = await axios.get(`${API_URL}/planets`).then((res) => {

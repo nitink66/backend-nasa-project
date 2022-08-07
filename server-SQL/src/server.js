@@ -15,11 +15,10 @@ const server = http.createServer(app);
 
 async function startServer() {
     // MYSQL CONNECTION
-    await mySqlDbConnection().then(async () => {
-        await loadPlanetsData();
-        server.listen(PORT, () => {
-            console.log(`Server is started on PORT : ${PORT}`);
-        });
+    await mySqlDbConnection();
+    await loadPlanetsData();
+    server.listen(PORT, () => {
+        console.log(`Server is started on PORT : ${PORT}`);
     });
 }
 
