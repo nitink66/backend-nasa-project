@@ -15,7 +15,7 @@ function getRandomNumberBetween(min, max) {
 
 async function getAllLaunches(req, res) {
     const dbResponse = await db.execute(getAllLaunchesDBQuery());
-    return res.status(201).json(dbResponse.rows);
+    return res.status(200).json(dbResponse.rows);
 }
 
 const postNewLaunch = async (req, res) => {
